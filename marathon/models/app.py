@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from ._compat import text_type
 from .base import MarathonResource, MarathonObject, assert_valid_path
 from .constraint import MarathonConstraint
 from .container import MarathonContainer
@@ -75,9 +76,11 @@ class MarathonApp(MarathonResource):
                  task_rate_limit=None, tasks=None, tasks_running=None, tasks_staged=None, tasks_healthy=None,
                  tasks_unhealthy=None, upgrade_strategy=None, uris=None, user=None, version=None):
 
-        # self.args = args or []
         self.accepted_resource_roles = accepted_resource_roles
-        self.args = args
+
+        # Make sure that all args are text_type, if not, marathon will not be happy
+        self.args = map(text_type, args) if args is not None else None
+        # self.args = args or []
         # Marathon 0.7.0-RC1 throws a validation error if this is [] and cmd is passed:
         # "error": "AppDefinition must either contain a 'cmd' or a 'container'."
 
